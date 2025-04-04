@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  phplist:
+    image: phplist/phplist:latest
+    container_name: phplist
+    ports:
+      - "8880:80"   # Map container's port 80 to local port 8880
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=phplist
+      - MYSQL_PASSWORD=phplist_password
+      - MYSQL_DB=phplist_db
+    depends_on:
+      - db
+    volumes:
+      - phplist_data:/var/www/html
+
+  db:
+    image: mysql:5.7
+    container_name: phplist_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=phplist_db
+      - MYSQL_USER=phplist
+      - MYSQL_PASSWORD=phplist_password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - phplist_network
+
+volumes:
+  phplist_data:
+  db_data:
+
+networks:
+  phplist_network:
+    driver: bridge
